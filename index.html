@@ -94,6 +94,20 @@ h1{
 .foot{margin-top:18px;text-align:center;font-size:11px;color:#6d644f}
 .foot button{background:none;border:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
 .sr{position:absolute;left:-9999px}
+.tw{display:none;margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.tw.show{display:block;animation:pop .5s ease}
+.tw h2{text-align:center;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.tw .tsub{margin-top:6px;text-align:center;font-size:13px;line-height:1.5;color:var(--muted)}
+.grid{margin-top:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tcard{display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.025);border:1px solid var(--line)}
+.tcard .pic{aspect-ratio:9/16;background:#0b0907;overflow:hidden}
+.tcard .pic img{display:block;width:100%;height:100%;object-fit:cover}
+.tcard .tb{padding:10px 10px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.tcard .tn{font-size:13px;font-weight:700;color:var(--gold-hi);line-height:1.25}
+.tcard .td{font-size:11px;color:var(--muted)}
+.tcard .btn{margin-top:8px;width:100%;text-align:center;text-decoration:none;display:block;padding:9px 6px;font-size:12px;min-height:0}
+.tcard.soon{border-style:dashed;justify-content:center;align-items:center;text-align:center;padding:16px 10px;color:var(--muted);font-size:12px;line-height:1.5}
+.tcard.soon b{display:block;color:var(--gold);font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -113,6 +127,12 @@ h1{
       <p class="thanks" id="thanks">Makasih sudah follow, kawan! Selamat ambil fotomu 🔥</p>
     </div>
 
+    <div class="tw" id="tw">
+      <h2>Twibbon Event Hades</h2>
+      <p class="tsub">Pasang di fotomu, lalu upload ke Story dan tag kami.</p>
+      <div class="grid" id="grid"></div>
+    </div>
+
     <p class="foot">Hades Spacebar · Palu <button type="button" id="reset">ulangi</button></p>
   </section>
 </main>
@@ -129,6 +149,13 @@ h1{
       { id:"ig_spacebar", platform:"Instagram", handle:"@hades.spacebar",   url:"https://www.instagram.com/hades.spacebar/", icon:"ig" },
       { id:"ig_resto",    platform:"Instagram", handle:"@hadescaferesto",   url:"https://www.instagram.com/hadescaferesto/", icon:"ig" },
       { id:"tt_spacebar", platform:"TikTok",    handle:"@hades.spacebar",   url:"https://www.tiktok.com/@hades.spacebar",    icon:"tt" }
+    ],
+    /* Daftar twibbon per event. Event baru: salin satu baris, taruh di PALING ATAS (yang terbaru duluan).
+       img  = gambar contoh di folder twibbon/ pada repository (foto + twibbon sudah ditempel)
+       url  = link file twibbon di Google Drive */
+    TWIBBONS: [
+      { name:"HADESWEEN", date:"31 Oktober 2026", img:"twibbon/halloween.jpg",
+        url:"https://drive.google.com/file/d/18axv77J-mGK5W4MKVrqjezZ5Jb6sY2u7/view?usp=sharing" }
     ]
   };
 
@@ -234,7 +261,9 @@ h1{
       $final.textContent="📸 Buka Folder Foto";
       $hint.textContent="";
       $thanks.style.display="block";
+      showTwibbons(true);
     }else{
+      showTwibbons(false);
       unlocked=false;
       $final.disabled=true; $final.className="big locked";
       $final.textContent="🔒 Link foto masih terkunci";
@@ -254,6 +283,34 @@ h1{
     CONFIG.ACCOUNTS.forEach(function(a){ state[a.id]={status:"idle",openedAt:0}; });
     save(); render();
   });
+
+  /* Grid twibbon: baru dibuat & ditampilkan setelah semua akun di-follow */
+  var twBuilt = false;
+  function showTwibbons(show){
+    var box = document.getElementById("tw");
+    if(!show){ box.classList.remove("show"); return; }
+    if(!twBuilt){
+      var g = document.getElementById("grid");
+      CONFIG.TWIBBONS.forEach(function(t){
+        var c = document.createElement("div"); c.className="tcard";
+        var pic = document.createElement("div"); pic.className="pic";
+        var im = document.createElement("img"); im.src=t.img; im.alt="Contoh twibbon "+t.name; im.loading="lazy";
+        pic.appendChild(im);
+        var tb = document.createElement("div"); tb.className="tb";
+        var n = document.createElement("div"); n.className="tn"; n.textContent=t.name;
+        var d = document.createElement("div"); d.className="td"; d.textContent=t.date;
+        var a = document.createElement("a"); a.className="btn btn-gold"; a.textContent="Pakai Twibbon ↗";
+        a.href=t.url; a.target="_blank"; a.rel="noopener";
+        tb.appendChild(n); tb.appendChild(d); tb.appendChild(a);
+        c.appendChild(pic); c.appendChild(tb); g.appendChild(c);
+      });
+      var s = document.createElement("div"); s.className="tcard soon";
+      s.innerHTML="<div><b>Segera hadir</b>Twibbon event berikutnya akan muncul di sini</div>";
+      g.appendChild(s);
+      twBuilt = true;
+    }
+    box.classList.add("show");
+  }
 
   document.addEventListener("visibilitychange", render);
   setInterval(function(){
