@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ambil Fotomu · Hades Spacebar</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#070707">
+<style>
+:root{
+  --bg:#070707; --bg2:#0E0C09; --card:#14100B;
+  --gold:#D7A935; --gold-hi:#F6DB83; --gold-lo:#8F6418;
+  --text:#F3EBD8;
+  --muted:#A89B7E; --line:rgba(215,169,53,.28); --ok:#6FCF97;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{
+  font-family:Poppins,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(900px 500px at 50% -10%,rgba(215,169,53,.16),transparent 60%),
+    radial-gradient(600px 400px at 100% 100%,rgba(143,100,24,.14),transparent 60%),
+    var(--bg);
+  color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px 16px;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 2l26 15v30L28 62 2 47V17z' fill='none' stroke='%23D7A935' stroke-opacity='.07' stroke-width='1'/%3E%3C/svg%3E");
+  background-size:56px 97px;
+}
+.wrap{position:relative;width:100%;max-width:440px}
+.card{
+  position:relative;background:linear-gradient(180deg,var(--card),var(--bg2));
+  border-radius:22px;padding:30px 22px 22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px var(--line);
+}
+.card::before{
+  content:"";position:absolute;inset:-1px;border-radius:23px;padding:1px;z-index:-1;
+  background:linear-gradient(135deg,var(--gold-hi),var(--gold-lo) 40%,var(--gold) 70%,var(--gold-lo));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;opacity:.8;
+}
+.brand{text-align:center;font-size:11px;letter-spacing:.32em;color:var(--gold);text-transform:uppercase;font-weight:600}
+.brand small{display:block;margin-top:4px;letter-spacing:.2em;color:var(--muted);font-size:9.5px;font-weight:500}
+h1{
+  margin-top:18px;text-align:center;font-size:27px;line-height:1.2;font-weight:700;
+  background:linear-gradient(180deg,var(--gold-hi),var(--gold) 55%,var(--gold-lo));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{margin-top:10px;text-align:center;font-size:14px;line-height:1.55;color:var(--muted)}
+.sub b{color:var(--text);font-weight:600}
+.progress{margin:22px 0 14px;display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:6px;border-radius:99px;background:rgba(215,169,53,.14);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi));transition:width .5s ease}
+.count{font-size:12px;color:var(--gold);font-weight:600;min-width:34px;text-align:right}
+.steps{display:grid;gap:10px}
+.step{
+  display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
+  background:rgba(255,255,255,.025);border:1px solid var(--line);transition:border-color .3s,background .3s;
+}
+.step.done{border-color:rgba(111,207,151,.5);background:rgba(111,207,151,.06)}
+.ico{
+  flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(215,169,53,.2),rgba(143,100,24,.12));color:var(--gold-hi);
+}
+.ico svg{width:22px;height:22px}
+.meta{flex:1;min-width:0}
+.meta .pl{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.meta .hd{font-size:15px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{
+  flex:none;border:0;cursor:pointer;font:inherit;font-size:12.5px;font-weight:600;
+  padding:10px 14px;border-radius:10px;min-height:40px;transition:transform .1s,opacity .2s;
+}
+.btn:active{transform:scale(.97)}
+.btn-gold{color:#1a1204;background:linear-gradient(135deg,var(--gold-hi),var(--gold) 55%,var(--gold-lo))}
+.btn-ghost{color:var(--gold-hi);background:transparent;border:1px solid var(--gold)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.tick{flex:none;width:40px;height:40px;display:none;place-items:center;color:var(--ok)}
+.step.done .tick{display:grid}
+.step.done .btn{display:none}
+.tick svg{width:24px;height:24px}
+.hint{margin-top:10px;min-height:18px;text-align:center;font-size:12px;color:var(--muted)}
+.final{margin-top:18px}
+.final .big{
+  width:100%;padding:15px;border:0;border-radius:14px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;
+  letter-spacing:.02em;
+}
+.locked{background:rgba(255,255,255,.05);color:var(--muted);border:1px dashed var(--line);cursor:not-allowed}
+.open{color:#1a1204;background:linear-gradient(135deg,var(--gold-hi),var(--gold) 55%,var(--gold-lo));box-shadow:0 8px 28px rgba(215,169,53,.35);animation:pop .5s ease}
+@keyframes pop{from{transform:scale(.94);opacity:.4}to{transform:scale(1);opacity:1}}
+.thanks{margin-top:12px;text-align:center;font-size:13px;color:var(--gold-hi);display:none}
+.foot{margin-top:18px;text-align:center;font-size:11px;color:#6d644f}
+.foot button{background:none;border:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="card">
+    <div class="brand">Hades Spacebar<small>HADES CAFE &amp; RESTO</small></div>
+    <h1>Mau ambil fotomu?</h1>
+    <p class="sub">Follow Instagram dan TikTok kami dulu yaa, <b>baru bisa melanjutkan.</b></p>
+
+    <div class="progress" aria-hidden="true"><div class="bar"><i id="fill"></i></div><div class="count" id="count">0/3</div></div>
+
+    <div class="steps" id="steps"></div>
+    <p class="hint" id="hint" aria-live="polite"></p>
+
+    <div class="final">
+      <button class="big locked" id="final" type="button" disabled>🔒 Link foto masih terkunci</button>
+      <p class="thanks" id="thanks">Makasih sudah follow, kawan! Selamat ambil fotomu 🔥</p>
+    </div>
+
+    <p class="foot">Hades Spacebar · Palu <button type="button" id="reset">ulangi</button></p>
+  </section>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ PENGATURAN (ubah di sini saja) ============ */
+  var CONFIG = {
+    // Waktu minimal (detik) sejak tombol follow diklik, sebelum "Sudah follow" bisa ditekan
+    WAIT_SECONDS: 8,
+    ACCOUNTS: [
+      { id:"ig_spacebar", platform:"Instagram", handle:"@hades.spacebar",   url:"https://www.instagram.com/hades.spacebar/", icon:"ig" },
+      { id:"ig_resto",    platform:"Instagram", handle:"@hadescaferesto",   url:"https://www.instagram.com/hadescaferesto/", icon:"ig" },
+      { id:"tt_spacebar", platform:"TikTok",    handle:"@hades.spacebar",   url:"https://www.tiktok.com/@hades.spacebar",    icon:"tt" }
+    ]
+  };
+
+  /* Link Google Drive disimpan terpotong + base64, tidak tertulis polos di HTML.
+     Hanya dirakit saat tombol akhir ditekan SETELAH semua langkah selesai. */
+  var P = ["aHR0cHM6Ly9kcml2ZS5n","b29nbGUuY29tL2RyaXZl","L2ZvbGRlcnMvMS1jSFdf","S21tM3ZKbmJvcDlFNnFk","cDl5Um9QM2U3MlFiP3Vz","cD1zaGFyaW5n"];
+  function driveUrl(){ return atob(P.join("")); }
+
+  var ICONS = {
+    ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>',
+    tt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.3 2.3 1.6 3.9 3.9 4.1v3.1c-1.4.1-2.7-.3-3.9-1.1v6.1c0 3.1-2.2 5.5-5.3 5.5S6 18.3 6 15.4s2.4-5.4 5.7-5.2v3.2c-1.4-.3-2.6.7-2.6 2.1 0 1.2.9 2.1 2.1 2.1 1.3 0 2.2-.9 2.2-2.4V3h3.2z"/></svg>',
+    ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>'
+  };
+
+  var KEY = "hades_gate_v1";
+  var state = {};            // id -> {status:"idle"|"opened"|"done", openedAt:number}
+  var unlocked = false;
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw){ var d = JSON.parse(raw); if(d && typeof d==="object") state = d; }
+    }catch(e){}
+    CONFIG.ACCOUNTS.forEach(function(a){
+      var s = state[a.id];
+      // Sesi lama yang tertinggal di status "opened" dianggap belum mulai (hindari lompatan otomatis)
+      if(!s || s.status==="opened") state[a.id] = {status:"idle", openedAt:0};
+    });
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+  var $steps = document.getElementById("steps");
+  var $fill  = document.getElementById("fill");
+  var $count = document.getElementById("count");
+  var $hint  = document.getElementById("hint");
+  var $final = document.getElementById("final");
+  var $thanks= document.getElementById("thanks");
+  var rows = {};
+
+  function build(){
+    CONFIG.ACCOUNTS.forEach(function(a){
+      var el = document.createElement("div");
+      el.className = "step";
+      el.innerHTML =
+        '<div class="ico">'+ICONS[a.icon]+'</div>'+
+        '<div class="meta"><div class="pl"></div><div class="hd"></div></div>'+
+        '<button type="button" class="btn btn-gold"></button>'+
+        '<div class="tick">'+ICONS.ok+'</div>';
+      el.querySelector(".pl").textContent = a.platform;
+      el.querySelector(".hd").textContent = a.handle;
+      var btn = el.querySelector(".btn");
+      btn.addEventListener("click", function(){ onStepClick(a); });
+      $steps.appendChild(el);
+      rows[a.id] = {el:el, btn:btn};
+    });
+  }
+
+  function onStepClick(a){
+    var s = state[a.id];
+    if(s.status==="idle"){
+      s.status="opened"; s.openedAt=Date.now(); save();
+      window.open(a.url, "_blank", "noopener");
+      render();
+    }else if(s.status==="opened" && canConfirm(s)){
+      s.status="done"; save(); render();
+    }
+  }
+
+  function canConfirm(s){
+    return document.visibilityState==="visible" && (Date.now()-s.openedAt) >= CONFIG.WAIT_SECONDS*1000;
+  }
+
+  function doneCount(){
+    return CONFIG.ACCOUNTS.filter(function(a){return state[a.id].status==="done";}).length;
+  }
+
+  function render(){
+    var total = CONFIG.ACCOUNTS.length, n = doneCount();
+    $fill.style.width = (n/total*100)+"%";
+    $count.textContent = n+"/"+total;
+
+    var waiting = null;
+    CONFIG.ACCOUNTS.forEach(function(a){
+      var s = state[a.id], r = rows[a.id];
+      r.el.classList.toggle("done", s.status==="done");
+      if(s.status==="idle"){
+        r.btn.disabled=false; r.btn.className="btn btn-gold"; r.btn.textContent="Follow ↗";
+      }else if(s.status==="opened"){
+        var left = Math.ceil((CONFIG.WAIT_SECONDS*1000-(Date.now()-s.openedAt))/1000);
+        if(document.visibilityState!=="visible" || left>0){
+          r.btn.disabled=true; r.btn.className="btn btn-ghost";
+          r.btn.textContent = (document.visibilityState!=="visible") ? "Menunggu…" : "Tunggu "+Math.max(left,1)+"s";
+          waiting = a;
+        }else{
+          r.btn.disabled=false; r.btn.className="btn btn-gold"; r.btn.textContent="Sudah follow ✓";
+        }
+      }
+    });
+
+    if(n===total){
+      if(!unlocked){ unlocked=true; }
+      $final.disabled=false; $final.className="big open";
+      $final.textContent="📸 Buka Folder Foto";
+      $hint.textContent="";
+      $thanks.style.display="block";
+    }else{
+      unlocked=false;
+      $final.disabled=true; $final.className="big locked";
+      $final.textContent="🔒 Link foto masih terkunci";
+      $thanks.style.display="none";
+      if(waiting){ $hint.textContent="Follow dulu akunnya di tab yang terbuka, lalu balik ke sini yaa."; }
+      else if(n===0){ $hint.textContent="Tekan “Follow” di tiap akun, ya."; }
+      else { $hint.textContent="Sedikit lagi — tinggal "+(total-n)+" akun."; }
+    }
+  }
+
+  $final.addEventListener("click", function(){
+    if(doneCount()!==CONFIG.ACCOUNTS.length) return;   // jaga-jaga
+    window.open(driveUrl(), "_blank", "noopener");
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    CONFIG.ACCOUNTS.forEach(function(a){ state[a.id]={status:"idle",openedAt:0}; });
+    save(); render();
+  });
+
+  document.addEventListener("visibilitychange", render);
+  setInterval(function(){
+    var any = CONFIG.ACCOUNTS.some(function(a){return state[a.id].status==="opened";});
+    if(any) render();
+  }, 500);
+
+  load(); build(); render();
+})();
+</script>
+</body>
+</html>
